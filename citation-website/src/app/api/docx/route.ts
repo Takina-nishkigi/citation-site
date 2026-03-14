@@ -68,7 +68,12 @@ export async function POST(req: NextRequest) {
     });
 
     const docBuffer = await Packer.toBuffer(doc);
-    return new NextResponse(docBuffer, {
+    // Buffer -> ArrayBuffer（NextResponse 需要 BodyInit 类型）
+    const arrayBuf = docBuffer.buffer.slice(
+      docBuffer.byteOffset,
+      docBuffer.byteOffset + docBuffer.byteLength
+    ) as ArrayBuffer;
+    return new NextResponse(arrayBuf, {
       status: 200,
       headers: {
         "Content-Type":
